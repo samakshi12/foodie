@@ -1,15 +1,57 @@
-import React from 'react'
-import Img1 from '../images/food1.jpg';
-export default function Content() {
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatchCart, useCart } from './ContextReducer';
+export default function Content(props) {
+
+  let dispatch = useDispatchCart();
+  let data = useCart();
+  let options = props.options;
+  const priceRef = useRef();
+
+  let priceOptions = Object.keys(options);
+  const[size,setSize] = useState("");
+  const[qty, setQty] = useState(1);
+
+  const handleAddToCart = async()=>{
+    let food = []
+    for(const item of data){
+      if(item.id === props.foodItem._id){
+        food = item;
+
+        break;
+      }
+    }
+
+    if(food!==[])
+    {
+      if(food.size === size){
+        await dispatch({ type: "UPDATE", id: props.foodItem._id, price: finalPrice, qty: qty})
+        return
+      }
+      else if( food.size !== size){ 
+    await dispatch({type:"ADD", id:props.foodItem._id, name: props.foodItem.name, price: finalPrice,
+    qty: qty, size:size
+    })
+     return
+    }
+    return
+    }
+     await dispatch({type:"ADD", id:props.foodItem._id, name: props.foodItem.name, price: finalPrice,
+    qty: qty, size:size
+    })
+  }
+  let finalPrice = qty * parseInt(options[size]);
+  useEffect(()=>{
+    setSize(priceRef.current.value)
+  },[])
   return (
     <div>
     <div className="card mt-3"  style={{"width": "18rem", "maxHeight":"360px"}}>
-    <img src={Img1} className="card-img-top" alt="..."/>
+    <img src={props.imgSrc} className="card-img-top" alt="..." style={{height:"120px", objectFit:"fill"}}/>
     <div className="card-body">
-      <h5 className="card-title">Food Name</h5>
-      <p className="card-text">Description</p>
+      <h5 className="card-title">{props.foodItem.name}</h5>
+      {/* <p className="card-text">Description</p> */}
       <div className='container w-100'>
-      <select className='m-2 h-100  bg-success'>
+      <select className='m-2 h-100  bg-success rounded' onChange={(e)=>setQty(e.target.value)}>
        {Array.from(Array(10), (e,i)=> {
         return(
             <option key={(i+1)} value={(i+1)}> {i+1} </option>
@@ -17,21 +59,23 @@ export default function Content() {
        })}
       </select>
      
-     <select className='m-2 h-100  bg-success'>
-       <option value="half">Half</option>
-       <option value="full">Full</option>
+     <select className='m-2 h-100  bg-success rounded' ref={priceRef} onChange={(e)=> setSize(e.target.value) }>
+      {priceOptions.map((data)=>{
+         return <option key ={data} value={data}> {data} </option>
+      })}
       </select>
     
       <div className='d-inline h-100'>
-        Total price
+        Rs.{finalPrice}/-
       </div>
-     
+      </div>
+      <hr>
 
-      </div>
+      </hr>
 
       
       <div>
-      <button type="button" className="btn btn-outline-success m-2 h-100 d-inline ">Add to cart</button>
+      <button type="button" className="btn btn-outline-success m-2 h-100 d-inline " onClick={handleAddToCart}>Add to cart</button>
 
       </div>
    

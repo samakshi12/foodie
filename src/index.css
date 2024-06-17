@@ -15,3 +15,18 @@ code {
 #carousel{
   max-height: 400px;
 }
+.carousel .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* or contain, depending on your requirement */
+}
+
+.carousel-inner{
+   width:640px;
+   height:100%;
+ }
+
+ .change{
+  object-fit: fill;
+  height:1000px;
+ }
